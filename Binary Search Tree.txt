@@ -1,0 +1,487 @@
+//Given a BST and an integer k. Find if the integer k is present in given BST or not. You have to return true, if node with data k is present, return false otherwise.
+Note: Assume that BST contains all unique elements.
+
+bool searchInBST(BinaryTreeNode<int> *root , int k) {
+	if(root==NULL){
+		return false;
+	}
+	if(root->data == k){
+		return true;
+	}
+	else if(k>root->data){
+		searchInBST(root->right, k);
+	}
+	else if(k<root->data){
+		searchInBST(root->left, k);
+	}
+	else{
+		return false;
+	}
+
+}
+
+//Given a Binary Search Tree and two integers k1 and k2, find and print the elements which are in range k1 and k2 (both inclusive).
+Print the elements in increasing order.
+
+void elementsInRangeK1K2(BinaryTreeNode<int>* root, int k1, int k2) {
+	if(root==NULL || k1>k2){
+		return;
+	}
+	/*
+	if(root->data>=k1 && root->data<=k2){
+		cout<<root->data<<" ";
+    }
+	if(root->data>k1){
+		elementsInRangeK1K2(root->left, k1, k2);
+	}
+	if(root->data<k2){
+		elementsInRangeK1K2(root->right, k1, k2);
+    }
+*/
+	elementsInRangeK1K2(root->left, k1, k2);
+
+    if (root->data >= k1 && root->data <= k2) {
+        cout << root->data << " ";
+    }
+
+	elementsInRangeK1K2(root->right, k1,k2);
+
+
+}
+
+//Given a binary tree with N number of nodes, check if that input tree is BST (Binary Search Tree). If yes, return true, return false otherwise.
+Note: Duplicate elements should be kept in the right subtree.
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int retmax(BinaryTreeNode<int>*root){
+	if(root==NULL){
+		return INT_MIN;
+	}
+	int val = root->data;
+	int left = retmax(root->left);
+	int right = retmax(root->right);
+	return max(val,max(left,right));
+}
+int retmin(BinaryTreeNode<int>*root){
+    if (root == NULL) {
+        return INT_MAX;
+    }
+    int val = root->data;
+	int left = retmin(root->left);
+	int right = retmin(root->right);
+	return min(val,min(left,right));
+}
+bool isBST(BinaryTreeNode<int> *root) {
+	if(root==NULL){
+		return true;
+	}
+	if(root->left!=NULL && retmax(root->left)>=root->data){
+		return false;
+	}
+	if(root->right!=NULL && retmin(root->right)<root->data){
+		return false;
+	}
+	if(!isBST(root->left) || !isBST(root->right)){
+		return false;
+	}
+	return true;
+}
+
+//Given a sorted integer array A of size n, which contains all unique elements. You need to construct a balanced BST from this input array. Return the root of constructed BST.
+Note: If array size is even, take first mid as root.
+
+BinaryTreeNode<int>* helperConstructTree(int *input, int si, int ei){
+	if(si>ei){
+		return NULL;
+	}
+	int mid = (si+ei)/2;
+	BinaryTreeNode<int>* node = new BinaryTreeNode<int>(input[mid]);
+	node->left = helperConstructTree(input, si, mid-1);
+	node->right = helperConstructTree(input, mid+1, ei);
+	return node;
+}
+
+BinaryTreeNode<int>* constructTree(int *input, int n) {
+	return helperConstructTree(input,0,n-1);
+}
+
+//Given a BST, convert it into a sorted linked list. You have to return the head of LL.
+
+Node<int>* constructLinkedList(BinaryTreeNode<int>* root) {
+	if(root==NULL){
+		return NULL;
+	}
+	Node<int>* newnode = new Node<int>(root->data);
+	Node<int>* left = constructLinkedList(root->left);
+	Node<int>* right = constructLinkedList(root->right);
+	if(left!=NULL){
+		Node<int>* temp = left;
+		while(temp->next!=NULL){
+			temp = temp->next;
+		}
+		temp->next = newnode;
+		newnode->next = right;
+		return left;
+	}
+	else{
+		newnode->next = right;
+		return newnode;
+	}
+}
+
+//Given a BST and an integer k. Find and return the path from the node with data k and root (if a node with data k is present in given BST) in a list. Return empty list otherwise.
+Note: Assume that BST contains all unique elements.
+
+vector<int>* getPath(BinaryTreeNode<int> *root , int data) {
+	if(root==NULL){
+		return NULL;
+	}
+	if(root->data == data){
+		vector<int>* vec = new vector<int>();
+		vec->push_back(root->data);
+		return vec;
+	}
+	vector<int>* left = getPath(root->left, data);
+	if(left!=NULL){
+		left->push_back(root->data);
+		return left;
+	}
+	vector<int>* right = getPath(root->right, data);
+	if(right!=NULL){
+		right->push_back(root->data);
+		return right;
+	}
+	return NULL;
+}
+
+//Implement the BST class which includes following functions -
+1. insert -
+Given an element, insert that element in the BST at the correct position. If element is equal to the data of the node, insert it in the left subtree.
+2. search
+Given an element, find if that is present in BST or not. Return true or false.
+3. delete -
+Given an element, remove that element from the BST. If the element which is to be deleted has both children, replace that with the minimum element from right sub-tree.
+4. printTree (recursive) -
+Print the BST in in the following format -
+
+class BST {
+    BinaryTreeNode<int>* root;
+   public:
+    BST() { 
+        root=NULL;
+    }
+
+	/*----------------- Public Functions of BST -----------------*/
+    private:
+    BinaryTreeNode<int>* remove(int data, BinaryTreeNode<int>*root){
+        if(root==NULL){
+            return NULL;
+        }
+        if(root->data>data){
+            root->left = remove(data, root->left);
+            return root;
+        }
+        else if(root->data<data){
+            root->right = remove(data, root->right);
+            return root;
+        }
+        else{
+            if(root->right==NULL && root->left==NULL){
+                return NULL;
+            }
+            else if(root->right==NULL){
+                BinaryTreeNode<int>*temp = root->left;
+                root->left=NULL;
+                delete(root);
+                return temp;
+            }
+            else if(root->left==NULL){
+                BinaryTreeNode<int>*temp = root->right;
+                root->right=NULL;
+                delete(root);
+                return temp;
+            }
+            else{
+                BinaryTreeNode<int>*temp = root->right;
+                while(temp->left!=NULL){
+                    temp = temp->left;
+                }
+                root->data = temp->data;
+                root->right = remove(temp->data, root->right);
+                return root;
+            }
+        }
+    }
+
+    void print(BinaryTreeNode<int>*root){
+        if(root==NULL){
+            return;
+        }
+        cout<<root->data<<":";
+        if(root->left!=NULL){
+            cout<<"L:"<<root->left->data<<",";
+        }
+        if(root->right!=NULL){
+            cout<<"R:"<<root->right->data;
+        }
+        cout<<endl;
+        print(root->left);
+        print(root->right);
+    }
+
+    BinaryTreeNode<int>*insert(int data,BinaryTreeNode<int>*root){
+        if(root==NULL){
+            BinaryTreeNode<int>*node = new BinaryTreeNode<int>(data);
+            return node;
+        }
+        if(root->data>=data){
+            root->left = insert(data,root->left);
+        }
+        else{
+            root->right = insert(data, root->right);
+        }
+        return root;
+    }
+
+    bool search(int data, BinaryTreeNode<int>*root){
+        if(root==NULL){
+            return false;
+        }
+        if(root->data==data){
+            return true;
+        }
+        else if(data<root->data){
+            return search(data, root->left);
+        }
+        else{
+            return search(data, root->right);
+        }
+        return false;
+    }
+
+    public:
+
+    void remove(int data) { 
+        this->root = remove(data,root);
+    }
+
+    void print() { 
+       print(root);
+    }
+
+    void insert(int data) { 
+        this->root = insert(data,root);
+    }
+
+    bool search(int data) {
+		return search(data, root);
+    }
+};
+
+//For a given a Binary Tree of type integer, duplicate every node of the tree and attach it to the left of itself.
+The root will remain the same. So you just need to insert nodes in the given Binary Tree.
+
+void insertDuplicateNode(BinaryTreeNode<int> *root) {
+    if(root==NULL){
+        return;
+    }
+    insertDuplicateNode(root->left);
+    insertDuplicateNode(root->right);
+    BinaryTreeNode<int>* newnode = new BinaryTreeNode<int>(root->data);
+    BinaryTreeNode<int>* left = root->left;
+    root->left = newnode;
+    newnode->left = left;
+    
+
+}
+
+//Given a binary tree and an integer S, print all the pair of nodes whose sum equals S.
+
+#include <bits/stdc++.h>
+using namespace std;
+void convertoarray(BinaryTreeNode<int>* root, vector<int> &output){
+  if(root==NULL){
+    return;
+  }
+  convertoarray(root->left, output);
+  output.push_back(root->data);
+  convertoarray(root->right, output);
+}
+
+void pairSum(BinaryTreeNode<int>*root, int sum){
+  vector<int> output;
+  convertoarray(root, output);
+  sort(output.begin(),output.end());
+  int i=0,j=output.size()-1;
+  while(i<j){
+    if((output[i]+output[j]) == sum){
+      cout<<output[i]<<" "<<output[j]<<"\n";
+      i++;
+      j--;
+    }
+    else if((output[i]+output[j])<sum){
+      i++;
+    }
+    else{
+      j--;
+    }
+  }
+}
+
+//Given a binary tree and data of two nodes, find 'LCA' (Lowest Common Ancestor) of the given two nodes in the binary tree.
+
+bool findPath(BinaryTreeNode<int> *root, vector<int> &path, int k) {
+  // base case
+  if (root == NULL)
+    return false;
+
+  // Store this node in path vector. The node will be
+  // removed if not in path from root to k
+  path.push_back(root->data);
+
+  // See if the k is same as root's key
+  if (root->data == k)
+    return true;
+
+  // Check if k is found in left or right sub-tree
+  if ((root->left && findPath(root->left, path, k)) ||
+      (root->right && findPath(root->right, path, k)))
+    return true;
+
+  // If not present in subtree rooted with root, remove
+  // root from path[] and return false
+  path.pop_back();
+  return false;
+}
+
+// Returns LCA if node n1, n2 are present in the given
+// binary tree, otherwise return -1
+int getLCA(BinaryTreeNode<int> *root, int n1, int n2) {
+  // to store paths to n1 and n2 from the root
+  vector<int> path1, path2;
+
+  // Find paths from root to n1 and root to n2. If either
+  // n1 or n2 is not present, return -1
+  if (!findPath(root, path1, n1) && !findPath(root, path2, n2)){
+	  return -1;
+  }
+    else if (findPath(root, path1, n1) && !findPath(root, path2, n2)){
+       return n1;
+  } 
+  else if (!findPath(root, path1, n1) && findPath(root, path2, n2)){
+	  return n2;
+  }
+
+    /* Compare the paths to get the first different value */
+    int i;
+  for (i = 0; i < path1.size() && i < path2.size(); i++)
+    if (path1[i] != path2[i])
+      break;
+  return path1[i - 1];
+}
+
+//Given a binary search tree and data of two nodes, find 'LCA' (Lowest Common Ancestor) of the given two nodes in the BST.
+
+int getLCA(BinaryTreeNode<int>* root , int val1 , int val2){
+  if (root == NULL)
+    return -1;
+
+  // If both n1 and n2 are smaller
+  // than root, then LCA lies in left
+  if (root->data > val1 && root->data > val2)
+    return getLCA(root->left, val1, val2);
+
+  // If both n1 and n2 are greater than
+  // root, then LCA lies in right
+  if (root->data < val1 && root->data < val2)
+    return getLCA(root->right, val1, val2);
+
+  return root->data;
+}
+
+//Given a Binary tree, find the largest BST subtree. That is, you need to find the BST with maximum height in the given binary tree. You have to return the height of largest BST.
+
+#include <climits>
+#include <cmath>
+
+class BSTreturn {
+
+public:
+  int min, max, height;
+  bool isBST;
+};
+
+BSTreturn helper(BinaryTreeNode<int> *root) {
+  if (root == NULL) {
+
+    BSTreturn ans;
+    ans.min = INT_MAX;
+    ans.max = INT_MIN;
+    ans.height = 0;
+    ans.isBST = true;
+    return ans;
+  }
+
+  BSTreturn Left = helper(root->left);
+  BSTreturn Right = helper(root->right);
+
+  if (!(Left.isBST && Left.max < root->data))
+    Left.isBST = false;
+
+  if (!(Right.isBST && Right.min > root->data))
+    Right.isBST = false;
+
+  if (!Left.isBST || !Right.isBST || root->data > Right.min ||
+      root->data < Left.max) {
+    if (Left.height > Right.height) {
+      Left.isBST = false;
+      return Left;
+
+    }
+    else {
+      Right.isBST = false;
+      return Right;
+    }
+  }
+  BSTreturn ans;
+  ans.isBST = true;
+  ans.min = min(Left.min, min(root->data, Right.min));
+  ans.max = max(Left.max, max(root->data, Right.max));
+  ans.height = max(Left.height, Right.height) + 1;
+  return ans;
+}
+
+int largestBSTSubtree(BinaryTreeNode<int> *root) { 
+	return helper(root).height; 
+}
+
+//Given a binary search tree, you have to replace each node's data with the sum of all nodes which are greater or equal than it. You need to include the current node's data also.
+That is, if in given BST there is a node with data 5, you need to replace it with sum of its data (i.e. 5) and all nodes whose data is greater than or equal to 5.
+Note: You don't need to return or print, just change the data of each node.
+
+void modifyBSTUtil(BinaryTreeNode<int> *root, int *sum) {
+  // Base Case
+  if (root == NULL)
+    return;
+
+  // Recur for right subtree
+  modifyBSTUtil(root->right, sum);
+
+  // Now *sum has sum of nodes
+  // in right subtree, add
+  // root->data to sum and
+  // update root->data
+  *sum = *sum + root->data;
+  root->data = *sum;
+
+  // Recur for left subtree
+  modifyBSTUtil(root->left, sum);
+}
+
+// A wrapper over modifyBSTUtil()
+void replaceWithLargerNodesSum(BinaryTreeNode<int> *root) {
+  int sum = 0;
+  modifyBSTUtil(root, &sum);
+}

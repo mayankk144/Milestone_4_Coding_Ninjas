@@ -1,0 +1,295 @@
+//Given a generic tree, print the input tree in level wise order.
+
+void printLevelWise(TreeNode<int>* root) {
+  if (root == nullptr)
+    return;
+  queue<TreeNode<int> *> q;
+  q.push(root);
+  while (!q.empty()) {
+    TreeNode<int> *curr = q.front();
+    q.pop();
+    cout << curr->data << ':';
+    int childCount = curr->children.size();
+    if (childCount) {
+      cout << curr->children[0]->data;
+      q.push(curr->children[0]);
+    }
+    for (int i = 1; i < childCount; i++) {
+      cout << ',' << curr->children[i]->data;
+      q.push(curr->children[i]);
+    }
+    cout << endl;
+  }
+}
+
+//Given a generic tree, find and return the sum of all nodes present in the given tree.
+
+int sumOfNodes(TreeNode<int>* root) {
+    int sum =root->data;
+    for(int i=0;i<root->children.size();i++){
+        sum += sumOfNodes(root->children[i]);
+    }
+    return sum;
+}
+
+//Given a generic tree, find and return the node with maximum data. You need to return the node which is having maximum data.
+Return null if tree is empty.
+
+TreeNode<int> *maxDataNode(TreeNode<int> *root) {
+  /* Given a generic tree, find and return the node with maximum data. You need
+   * to return the complete node which is having maximum data. Return null if
+   * tree is empty. */
+  if (root == nullptr)
+    return nullptr;
+  TreeNode<int> *result = root; // root node
+  int max = root->data;         // root node
+  int childCount = root->children.size();
+  for (int i = 0; i < childCount; i++) {
+    TreeNode<int> *temp = maxDataNode(root->children[i]);
+    if (temp->data > max) {
+      max = temp->data;
+      result = temp;
+    }
+  }
+  return result;
+}
+
+//Given a generic tree, find and return the height of given tree.
+
+int getHeight(TreeNode<int>* root) {
+  int temp = 0, HEIGHT = 0;
+  if (root == NULL)
+    return 0;
+
+  if (root->children.size() == 0)
+    return 1;
+
+  for (int i = 0; i < root->children.size(); i++) {
+    temp = getHeight(root->children[i]);
+
+    if (temp > HEIGHT)
+      HEIGHT = temp;
+  }
+
+  return HEIGHT + 1;
+}
+
+//Given a generic tree, count and return the number of leaf nodes present in the given tree.
+
+int getLeafNodeCount(TreeNode<int>* root) {
+    if(root==NULL){
+        return -1;
+    }
+    if(root->children.size()==0){
+        return 1;
+    }
+    int sum=0;
+    for(int i=0;i<root->children.size();i++){
+        sum += getLeafNodeCount(root->children[i]);
+    }
+    return sum;
+}
+
+//Given a generic tree, print the post-order traversal of given tree.
+The post-order traversal is: visit child nodes first and then root node.
+
+void printPostOrder(TreeNode<int>* root) {
+    if(root==NULL){
+        return;
+    }
+    for(int i=0;i<root->children.size();i++){
+        printPostOrder(root->children[i]);
+    }
+    cout << root->data << " ";
+}
+
+//Given a tree and an integer x, find and return the number of nodes which contains data greater than x.
+
+int getLargeNodeCount(TreeNode<int>* root, int x) {
+  if (root == nullptr)
+    return -1;
+    int sum=0;
+  if (root->data > x)
+    sum = 1;
+  int childCount = root->children.size();
+  for (int i = 0; i < childCount; i++)
+   sum+=getLargeNodeCount(root->children[i], x);
+  return sum;
+}
+
+//Given a generic tree, find and return the node for which sum of its data and data of all its child nodes is maximum. In the sum, data of the node and data of its immediate child nodes has to be taken.
+
+int sumNode(TreeNode<int> *root) {
+  /* Called by maxSumNode */
+  if (root == nullptr)
+    return 0;
+  int sum = root->data; // Calculate sumNode for root Node
+  int childCount = root->children.size();
+  for (int i = 0; i < childCount; i++)
+    sum += root->children[i]->data;
+  return sum;
+}
+
+TreeNode<int> *maxSumNode(TreeNode<int> *root) {
+  if (root == nullptr)
+    return nullptr;
+  TreeNode<int> *result = root; // root node
+  int maxSum = sumNode(root);   // Calculate sumNode for root Node
+  int childCount = root->children.size();
+  for (int i = 0; i < childCount; i++) {
+    TreeNode<int> *temp = maxSumNode(root->children[i]);
+    int sum = sumNode(temp);
+    if (sum > maxSum) {
+      maxSum = sum;
+      result = temp;
+    }
+  }
+  return result;
+}
+
+//Given two generic trees, return true if they are structurally identical. Otherwise return false.
+
+bool areIdentical(TreeNode<int> *root1, TreeNode<int> * root2) {
+  if (root1 == nullptr) {
+    if (root2 == nullptr)
+      return true;
+    else
+      return false;
+  }
+  /* Both root1 and root2 are non null */
+  if (root1->data != root2->data)
+    return false;
+  int childCount1 = root1->children.size();
+  int childCount2 = root2->children.size();
+  if (childCount1 != childCount2)
+    return false;
+  for (int i = 0; i < childCount1; i++)
+    if (!areIdentical(root1->children[i], root2->children[i]))
+      return false;
+  return true;
+}
+
+bool areIdentical(TreeNode<int> *root1, TreeNode<int> * root2) {
+  if (root1 == nullptr) {
+    if (root2 == nullptr)
+      return true;
+    else
+      return false;
+  }
+  /* Both root1 and root2 are non null */
+  if (root1->data != root2->data)
+    return false;
+  int childCount1 = root1->children.size();
+  int childCount2 = root2->children.size();
+  if (childCount1 != childCount2)
+    return false;
+  for (int i = 0; i < childCount1; i++)
+    if (!areIdentical(root1->children[i], root2->children[i]))
+      return false;
+  return true;
+}
+
+//Given a generic tree and an integer n. Find and return the node with next larger element in the tree i.e. find a node with value just greater than n.
+Note: Return NULL if no node is present with the value greater than n.
+
+TreeNode<int>* getNextLargerElement(TreeNode<int>* root, int x) {
+  if (root == nullptr)
+    return nullptr;
+  int childCount = root->children.size();
+  
+  TreeNode<int> *result = nullptr;
+  if (root->data > x)
+    result = root; // Found node with value greater than n
+  for (int i = 0; i < childCount; i++) {
+    TreeNode<int> *temp = getNextLargerElement(root->children[i], x);
+    if (temp == nullptr)
+      continue;
+    if (result == nullptr || result->data > temp->data)
+      result = temp;
+  }
+  return result;
+}
+
+//Given a generic tree and an integer n. Find and return the node with next larger element in the tree i.e. find a node with value just greater than n.
+Note: Return NULL if no node is present with the value greater than n.
+
+TreeNode<int>* getNextLargerElement(TreeNode<int>* root, int x) {
+  if (root == nullptr)
+    return nullptr;
+  int childCount = root->children.size();
+  
+  TreeNode<int> *result = nullptr;
+  if (root->data > x)
+    result = root; // Found node with value greater than n
+  for (int i = 0; i < childCount; i++) {
+    TreeNode<int> *temp = getNextLargerElement(root->children[i], x);
+    if (temp == nullptr)
+      continue;
+    if (result == nullptr || result->data > temp->data)
+      result = temp;
+  }
+  return result;
+}
+
+//Given a generic tree, find and return the node with second largest value in given tree.
+Note: Return NULL if no node with required value is present.
+
+TreeNode<int>* getSecondLargestNode(TreeNode<int>* root) {
+    if(root==nullptr) return nullptr;
+    int childCount = root->children.size();
+    if(childCount==0) return nullptr;
+
+    // we have atleast two nodes: root node and one child node
+    TreeNode<int> *largest = root, *secLargest=root->children[0];
+    if(largest->data<secLargest->data)
+    {
+        secLargest = root;
+        largest=root->children[0];
+    }
+    queue<TreeNode<int>*> q;
+    q.push(root);
+    while(!q.empty())
+    {
+        TreeNode<int> *curr = q.front();
+        q.pop();
+        childCount = curr->children.size();
+        for(int i=0; i<childCount; i++)
+        {
+            q.push(curr->children[i]);
+            if(curr->children[i]->data > secLargest->data)
+            {
+                if(curr->children[i]->data > largest->data)
+                {
+                    secLargest = largest;
+                    largest = curr->children[i];
+                }
+                else
+                {
+                    secLargest = curr->children[i];
+                }
+            }
+        }
+    }
+    return secLargest;
+}
+
+//You are given a generic tree. You have to replace each node with its depth value. You just have to update the data of each node, there is no need to return or print anything.
+
+void replaceWithDepthValueHelper(TreeNode<int> *root, int value) {
+  /* In a given Generic Tree, replace each node with its depth value. You need
+   * to just update the data of each node, no need to return or print anything.
+   * */
+  if (root == nullptr)
+    return;
+  root->data = value; // root node
+  int childCount = root->children.size();
+  for (int i = 0; i < childCount; i++)
+    replaceWithDepthValueHelper(root->children[i], value + 1);
+}
+
+void replaceWithDepthValue(TreeNode<int> *root) {
+  /* In a given Generic Tree, replace each node with its depth value. You need
+   * to just update the data of each node, no need to return or print anything.
+   * */
+  replaceWithDepthValueHelper(root, 0);
+}
